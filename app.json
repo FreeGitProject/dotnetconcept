@@ -30,6 +30,9 @@
         "projectId": "7341cdc0-6324-4250-a884-b71ad97b7b9d"
       }
     },
-    "owner": "avinashgupta380"
+    "owner": "avinashgupta380",
+    "android": {
+      "package": "com.avinashgupta380.dotnetconceptsapp"
+    }
   }
 }
