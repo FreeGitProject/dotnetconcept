@@ -1,0 +1,14 @@
+"scripts": {
+    "dev": "cross-env EXPO_NO_TELEMETRY=1 expo start",
+    "build:web": "expo export --platform web",
+    "lint": "expo lint"
+  },
+  
+eas logout
+eas login
+
+eas whoami
+
+after login use this site 
+
+https://docs.expo.dev/tutorial/eas/android-development-build/
