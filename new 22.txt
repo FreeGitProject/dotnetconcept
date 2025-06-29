@@ -25,3 +25,5 @@ than configure android or all
 eas build:configure
 and create preview
  eas build -p android --profile preview
+ 
+ https://www.youtube.com/watch?v=9XUk8c5r-bo

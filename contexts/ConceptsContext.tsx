@@ -18,6 +18,8 @@ interface ConceptsContextType {
   updateConcept: (concept: Concept) => void;
   deleteConcept: (topicID: number) => void;
   searchConcepts: (query: string) => Concept[];
+  importConcepts: (importedConcepts: Concept[]) => void;
+  exportConcepts: () => Concept[];
 }
 
 const ConceptsContext = createContext<ConceptsContextType | undefined>(undefined);
@@ -57,6 +59,30 @@ export function ConceptsProvider({ children }: ConceptsProviderProps) {
     );
   };
 
+  const importConcepts = (importedConcepts: Concept[]) => {
+    // Validate and sanitize imported concepts
+    const validConcepts = importedConcepts.filter(concept => 
+      concept.topicID && 
+      concept.title && 
+      concept.definition && 
+      concept.detailedExplanation && 
+      concept.keyword
+    );
+
+    // Ensure unique topic IDs
+    const maxExistingId = Math.max(...concepts.map(c => c.topicID), 0);
+    const conceptsWithUniqueIds = validConcepts.map((concept, index) => ({
+      ...concept,
+      topicID: concept.topicID > maxExistingId ? concept.topicID : maxExistingId + index + 1
+    }));
+
+    setConcepts(conceptsWithUniqueIds);
+  };
+
+  const exportConcepts = (): Concept[] => {
+    return [...concepts];
+  };
+
   return (
     <ConceptsContext.Provider 
       value={{ 
@@ -64,7 +90,9 @@ export function ConceptsProvider({ children }: ConceptsProviderProps) {
         addConcept, 
         updateConcept, 
         deleteConcept, 
-        searchConcepts 
+        searchConcepts,
+        importConcepts,
+        exportConcepts
       }}
     >
       {children}
