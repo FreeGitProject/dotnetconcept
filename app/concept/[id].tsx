@@ -8,7 +8,7 @@ import {
   Pressable 
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import { ArrowLeft, Code, Lightbulb, Clock, CircleAlert as AlertCircle } from 'lucide-react-native';
+import { ArrowLeft, Code, Lightbulb, Clock, CircleAlert as AlertCircle, CreditCard as Edit3 } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts } from '@/contexts/ConceptsContext';
 
@@ -18,6 +18,10 @@ export default function ConceptDetailScreen() {
   const { concepts } = useConcepts();
   
   const concept = concepts.find(c => c.topicID.toString() === id);
+
+  const handleEdit = () => {
+    router.push(`/concept/edit/${id}`);
+  };
 
   if (!concept) {
     return (
@@ -39,11 +43,17 @@ export default function ConceptDetailScreen() {
     header: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'space-between',
       paddingHorizontal: 16,
       paddingVertical: 16,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
       backgroundColor: colors.surface,
+    },
+    headerLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
     },
     backButton: {
       marginRight: 16,
@@ -54,6 +64,20 @@ export default function ConceptDetailScreen() {
       fontWeight: '600',
       color: colors.text,
       flex: 1,
+    },
+    editButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.primary,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 8,
+    },
+    editButtonText: {
+      color: 'white',
+      fontSize: 14,
+      fontWeight: '500',
+      marginLeft: 4,
     },
     scrollContainer: {
       flex: 1,
@@ -139,15 +163,22 @@ export default function ConceptDetailScreen() {
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Pressable 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <ArrowLeft size={20} color={colors.text} />
+        <View style={styles.headerLeft}>
+          <Pressable 
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <ArrowLeft size={20} color={colors.text} />
+          </Pressable>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            {concept.title}
+          </Text>
+        </View>
+        
+        <Pressable style={styles.editButton} onPress={handleEdit}>
+          <Edit3 size={16} color="white" />
+          <Text style={styles.editButtonText}>Edit</Text>
         </Pressable>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          {concept.title}
-        </Text>
       </View>
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>

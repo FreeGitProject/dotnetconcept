@@ -3,6 +3,11 @@
     "build:web": "expo export --platform web",
     "lint": "expo lint"
   },
+  npm install --save-dev cross-env
+  
+  
+  npm cache clean --force
+  
   
 eas logout
 eas login
@@ -12,3 +17,11 @@ eas whoami
 after login use this site 
 
 https://docs.expo.dev/tutorial/eas/android-development-build/
+
+
+create preview apk 
+first login expo acount 
+than configure android or all
+eas build:configure
+and create preview
+ eas build -p android --profile preview
