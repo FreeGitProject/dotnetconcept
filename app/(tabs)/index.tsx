@@ -1,5 +1,5 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, FlatList, SafeAreaView, ActivityIndicator } from 'react-native';
 import { router } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts, Concept } from '@/contexts/ConceptsContext';
@@ -8,8 +8,13 @@ import { ConceptCard } from '@/components/ConceptCard';
 
 export default function HomeScreen() {
   const { colors } = useTheme();
-  const { concepts, searchConcepts } = useConcepts();
+  const { concepts, searchConcepts, isLoading } = useConcepts();
   const [filteredConcepts, setFilteredConcepts] = useState<Concept[]>(concepts);
+
+  // Update filtered concepts when concepts change
+  React.useEffect(() => {
+    setFilteredConcepts(concepts);
+  }, [concepts]);
 
   const handleSearch = useCallback((query: string) => {
     const results = searchConcepts(query);
@@ -37,6 +42,15 @@ export default function HomeScreen() {
       </Text>
       <Text style={[styles.emptySubtitle, { color: colors.textSecondary }]}>
         Try adjusting your search terms or add a new concept
+      </Text>
+    </View>
+  );
+
+  const renderLoadingState = () => (
+    <View style={styles.loadingState}>
+      <ActivityIndicator size="large" color={colors.primary} />
+      <Text style={[styles.loadingText, { color: colors.textSecondary }]}>
+        Loading concepts...
       </Text>
     </View>
   );
@@ -86,7 +100,29 @@ export default function HomeScreen() {
       textAlign: 'center',
       lineHeight: 24,
     },
+    loadingState: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingTop: 80,
+    },
+    loadingText: {
+      fontSize: 16,
+      marginTop: 16,
+      textAlign: 'center',
+    },
   });
+
+  if (isLoading) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <View style={styles.header}>
+          <Text style={styles.title}>C# Concepts</Text>
+        </View>
+        {renderLoadingState()}
+      </SafeAreaView>
+    );
+  }
 
   return (
     <SafeAreaView style={styles.container}>
