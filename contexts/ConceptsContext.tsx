@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { concepts as initialConcepts } from '@/data/concepts';
 
@@ -35,6 +35,21 @@ const STORAGE_KEY = '@concepts_storage';
 export function ConceptsProvider({ children }: ConceptsProviderProps) {
   const [concepts, setConcepts] = useState<Concept[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+
+  // Create search index for faster searching
+  const searchIndex = useMemo(() => {
+    return concepts.map(concept => ({
+      ...concept,
+      searchText: [
+        concept.title,
+        concept.keyword,
+        concept.definition,
+        concept.detailedExplanation,
+        concept.whenToUse,
+        concept.whyNeed
+      ].join(' ').toLowerCase()
+    }));
+  }, [concepts]);
 
   // Load concepts from storage on app start
   useEffect(() => {
@@ -100,11 +115,33 @@ export function ConceptsProvider({ children }: ConceptsProviderProps) {
     if (!query.trim()) return concepts;
     
     const lowercaseQuery = query.toLowerCase().trim();
-    return concepts.filter(concept => 
-      concept.title.toLowerCase().includes(lowercaseQuery) ||
-      concept.keyword.toLowerCase().includes(lowercaseQuery) ||
-      concept.definition.toLowerCase().includes(lowercaseQuery)
-    );
+    const queryWords = lowercaseQuery.split(/\s+/);
+    
+    return searchIndex
+      .filter(concept => {
+        // Check if all query words are found in the search text
+        return queryWords.every(word => 
+          concept.searchText.includes(word)
+        );
+      })
+      .map(({ searchText, ...concept }) => concept) // Remove searchText from result
+      .sort((a, b) => {
+        // Prioritize title matches
+        const aTitle = a.title.toLowerCase();
+        const bTitle = b.title.toLowerCase();
+        
+        if (aTitle.includes(lowercaseQuery) && !bTitle.includes(lowercaseQuery)) return -1;
+        if (!aTitle.includes(lowercaseQuery) && bTitle.includes(lowercaseQuery)) return 1;
+        
+        // Then prioritize keyword matches
+        const aKeyword = a.keyword.toLowerCase();
+        const bKeyword = b.keyword.toLowerCase();
+        
+        if (aKeyword.includes(lowercaseQuery) && !bKeyword.includes(lowercaseQuery)) return -1;
+        if (!aKeyword.includes(lowercaseQuery) && bKeyword.includes(lowercaseQuery)) return 1;
+        
+        return 0;
+      });
   };
 
   const importConcepts = async (importedConcepts: Concept[]) => {

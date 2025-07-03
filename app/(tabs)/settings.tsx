@@ -194,7 +194,7 @@ export default function SettingsScreen() {
     } else {
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync('', {
-          message: shareMessage,
+          //message: shareMessage,
           dialogTitle: 'Share C# Concepts App'
         });
       }

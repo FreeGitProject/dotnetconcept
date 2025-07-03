@@ -20,109 +20,6 @@ export default function EditConceptScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   
   const concept = concepts.find(c => c.topicID.toString() === id);
-  
-  const [formData, setFormData] = useState({
-    title: '',
-    definition: '',
-    detailedExplanation: '',
-    whenToUse: '',
-    whyNeed: '',
-    codeExample: '',
-    keyword: '',
-  });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
-  useEffect(() => {
-    if (concept) {
-      setFormData({
-        title: concept.title,
-        definition: concept.definition,
-        detailedExplanation: concept.detailedExplanation,
-        whenToUse: concept.whenToUse || '',
-        whyNeed: concept.whyNeed || '',
-        codeExample: concept.codeExample || '',
-        keyword: concept.keyword,
-      });
-    }
-  }, [concept]);
-
-  if (!concept) {
-    return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-        <View style={styles.errorContainer}>
-          <Text style={[styles.errorText, { color: colors.text }]}>
-            Concept not found
-          </Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {};
-    
-    if (!formData.title.trim()) newErrors.title = 'Title is required';
-    if (!formData.definition.trim()) newErrors.definition = 'Definition is required';
-    if (!formData.detailedExplanation.trim()) newErrors.detailedExplanation = 'Detailed explanation is required';
-    if (!formData.keyword.trim()) newErrors.keyword = 'Keywords are required';
-    
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSave = () => {
-    if (!validateForm()) {
-      Alert.alert('Validation Error', 'Please fill in all required fields');
-      return;
-    }
-
-    const updatedConcept: Concept = {
-      ...concept,
-      ...formData,
-    };
-
-    updateConcept(updatedConcept);
-    
-    Alert.alert(
-      'Success',
-      'Concept updated successfully!',
-      [
-        {
-          text: 'OK',
-          onPress: () => {
-            router.back();
-          }
-        }
-      ]
-    );
-  };
-
-  const handleCancel = () => {
-    Alert.alert(
-      'Discard Changes',
-      'Are you sure you want to discard your changes?',
-      [
-        {
-          text: 'Keep Editing',
-          style: 'cancel'
-        },
-        {
-          text: 'Discard',
-          style: 'destructive',
-          onPress: () => router.back()
-        }
-      ]
-    );
-  };
-
-  const updateField = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-    if (errors[field]) {
-      setErrors(prev => ({ ...prev, [field]: '' }));
-    }
-  };
-
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -239,11 +136,114 @@ export default function EditConceptScreen() {
       alignItems: 'center',
       justifyContent: 'center',
     },
-    errorText: {
-      fontSize: 18,
-      fontWeight: '500',
-    },
+    // errorText: {
+    //   fontSize: 18,
+    //   fontWeight: '500',
+    // },
   });
+  const [formData, setFormData] = useState({
+    title: '',
+    definition: '',
+    detailedExplanation: '',
+    whenToUse: '',
+    whyNeed: '',
+    codeExample: '',
+    keyword: '',
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (concept) {
+      setFormData({
+        title: concept.title,
+        definition: concept.definition,
+        detailedExplanation: concept.detailedExplanation,
+        whenToUse: concept.whenToUse || '',
+        whyNeed: concept.whyNeed || '',
+        codeExample: concept.codeExample || '',
+        keyword: concept.keyword,
+      });
+    }
+  }, [concept]);
+
+  if (!concept) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={styles.errorContainer}>
+          <Text style={[styles.errorText, { color: colors.text }]}>
+            Concept not found
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+    
+    if (!formData.title.trim()) newErrors.title = 'Title is required';
+    if (!formData.definition.trim()) newErrors.definition = 'Definition is required';
+    if (!formData.detailedExplanation.trim()) newErrors.detailedExplanation = 'Detailed explanation is required';
+    if (!formData.keyword.trim()) newErrors.keyword = 'Keywords are required';
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSave = () => {
+    if (!validateForm()) {
+      Alert.alert('Validation Error', 'Please fill in all required fields');
+      return;
+    }
+
+    const updatedConcept: Concept = {
+      ...concept,
+      ...formData,
+    };
+
+    updateConcept(updatedConcept);
+    
+    Alert.alert(
+      'Success',
+      'Concept updated successfully!',
+      [
+        {
+          text: 'OK',
+          onPress: () => {
+            router.back();
+          }
+        }
+      ]
+    );
+  };
+
+  const handleCancel = () => {
+    Alert.alert(
+      'Discard Changes',
+      'Are you sure you want to discard your changes?',
+      [
+        {
+          text: 'Keep Editing',
+          style: 'cancel'
+        },
+        {
+          text: 'Discard',
+          style: 'destructive',
+          onPress: () => router.back()
+        }
+      ]
+    );
+  };
+
+  const updateField = (field: string, value: string) => {
+    setFormData(prev => ({ ...prev, [field]: value }));
+    if (errors[field]) {
+      setErrors(prev => ({ ...prev, [field]: '' }));
+    }
+  };
+
+  
 
   return (
     <SafeAreaView style={styles.container}>

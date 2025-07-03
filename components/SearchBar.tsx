@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, TextInput, StyleSheet, Pressable } from 'react-native';
 import { Search, X } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -11,26 +11,17 @@ interface SearchBarProps {
 export function SearchBar({ onSearch, placeholder = "Search concepts..." }: SearchBarProps) {
   const { colors } = useTheme();
   const [query, setQuery] = useState('');
-  const [debouncedQuery, setDebouncedQuery] = useState('');
 
+  // Immediate search without debouncing for faster results
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedQuery(query);
-    }, 300);
-
-    return () => clearTimeout(timer);
-  }, [query]);
-
-  useEffect(() => {
-    onSearch(debouncedQuery);
-  }, [debouncedQuery, onSearch]);
+    onSearch(query);
+  }, [query, onSearch]);
 
   const clearSearch = () => {
     setQuery('');
-    setDebouncedQuery('');
   };
 
-  const styles = StyleSheet.create({
+  const styles = useMemo(() => StyleSheet.create({
     container: {
       flexDirection: 'row',
       alignItems: 'center',
@@ -48,6 +39,11 @@ export function SearchBar({ onSearch, placeholder = "Search concepts..." }: Sear
       shadowRadius: 4,
       elevation: 2,
     },
+    focusedContainer: {
+      borderColor: colors.primary,
+      shadowColor: colors.primary,
+      shadowOpacity: 0.2,
+    },
     input: {
       flex: 1,
       fontSize: 16,
@@ -57,12 +53,16 @@ export function SearchBar({ onSearch, placeholder = "Search concepts..." }: Sear
     },
     clearButton: {
       padding: 4,
+      borderRadius: 12,
+      backgroundColor: colors.border,
     },
-  });
+  }), [colors]);
+
+  const [isFocused, setIsFocused] = useState(false);
 
   return (
-    <View style={styles.container}>
-      <Search size={20} color={colors.textSecondary} />
+    <View style={[styles.container, isFocused && styles.focusedContainer]}>
+      <Search size={20} color={isFocused ? colors.primary : colors.textSecondary} />
       <TextInput
         style={styles.input}
         value={query}
@@ -70,10 +70,14 @@ export function SearchBar({ onSearch, placeholder = "Search concepts..." }: Sear
         placeholder={placeholder}
         placeholderTextColor={colors.textSecondary}
         returnKeyType="search"
+        onFocus={() => setIsFocused(true)}
+        onBlur={() => setIsFocused(false)}
+        autoCorrect={false}
+        autoCapitalize="none"
       />
       {query.length > 0 && (
         <Pressable onPress={clearSearch} style={styles.clearButton}>
-          <X size={18} color={colors.textSecondary} />
+          <X size={16} color={colors.textSecondary} />
         </Pressable>
       )}
     </View>

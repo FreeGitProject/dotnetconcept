@@ -29,4 +29,6 @@ and create preview
  https://www.youtube.com/watch?v=9XUk8c5r-bo
  
  
+ for check packed updated or not 
+ npx expo install --check
  
