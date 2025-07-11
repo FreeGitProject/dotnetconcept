@@ -5,33 +5,21 @@ import {
   StyleSheet, 
   ScrollView, 
   SafeAreaView, 
-  Pressable 
+  Pressable,
+  Alert 
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import { ArrowLeft, Code, Lightbulb, Clock, CircleAlert as AlertCircle } from 'lucide-react-native';
+import { ArrowLeft, Code, Lightbulb, Clock, CircleAlert as AlertCircle, CreditCard as Edit3, Trash2 } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts } from '@/contexts/ConceptsContext';
 
 export default function ConceptDetailScreen() {
   const { colors } = useTheme();
   const { id } = useLocalSearchParams<{ id: string }>();
-  const { concepts } = useConcepts();
+  const { concepts, deleteConcept } = useConcepts();
   
   const concept = concepts.find(c => c.topicID.toString() === id);
-
-  if (!concept) {
-    return (
-      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
-        <View style={styles.errorContainer}>
-          <Text style={[styles.errorText, { color: colors.text }]}>
-            Concept not found
-          </Text>
-        </View>
-      </SafeAreaView>
-    );
-  }
-
-  const styles = StyleSheet.create({
+const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
@@ -39,11 +27,17 @@ export default function ConceptDetailScreen() {
     header: {
       flexDirection: 'row',
       alignItems: 'center',
+      justifyContent: 'space-between',
       paddingHorizontal: 16,
       paddingVertical: 16,
       borderBottomWidth: 1,
       borderBottomColor: colors.border,
       backgroundColor: colors.surface,
+    },
+    headerLeft: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      flex: 1,
     },
     backButton: {
       marginRight: 16,
@@ -54,6 +48,33 @@ export default function ConceptDetailScreen() {
       fontWeight: '600',
       color: colors.text,
       flex: 1,
+    },
+    headerActions: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    deleteButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.error,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      borderRadius: 8,
+      marginRight: 8,
+    },
+    editButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      backgroundColor: colors.primary,
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 8,
+    },
+    buttonText: {
+      color: 'white',
+      fontSize: 14,
+      fontWeight: '500',
+      marginLeft: 4,
     },
     scrollContainer: {
       flex: 1,
@@ -135,19 +156,73 @@ export default function ConceptDetailScreen() {
       fontWeight: '500',
     },
   });
+  const handleEdit = () => {
+    router.push(`/concept/edit/${id}`);
+  };
+
+  const handleDelete = () => {
+    Alert.alert(
+      'Delete Concept',
+      `Are you sure you want to delete "${concept?.title}"? This action cannot be undone.`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            if (concept) {
+              deleteConcept(concept.topicID);
+              router.back();
+            }
+          }
+        }
+      ]
+    );
+  };
+
+  if (!concept) {
+    return (
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
+        <View style={styles.errorContainer}>
+          <Text style={[styles.errorText, { color: colors.text }]}>
+            Concept not found
+          </Text>
+        </View>
+      </SafeAreaView>
+    );
+  }
+
+  
 
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
-        <Pressable 
-          style={styles.backButton}
-          onPress={() => router.back()}
-        >
-          <ArrowLeft size={20} color={colors.text} />
-        </Pressable>
-        <Text style={styles.headerTitle} numberOfLines={1}>
-          {concept.title}
-        </Text>
+        <View style={styles.headerLeft}>
+          <Pressable 
+            style={styles.backButton}
+            onPress={() => router.back()}
+          >
+            <ArrowLeft size={20} color={colors.text} />
+          </Pressable>
+          <Text style={styles.headerTitle} numberOfLines={1}>
+            {concept.title}
+          </Text>
+        </View>
+        
+        <View style={styles.headerActions}>
+          <Pressable style={styles.deleteButton} onPress={handleDelete}>
+            <Trash2 size={16} color="white" />
+            <Text style={styles.buttonText}>Delete</Text>
+          </Pressable>
+          
+          <Pressable style={styles.editButton} onPress={handleEdit}>
+            <Edit3 size={16} color="white" />
+            <Text style={styles.buttonText}>Edit</Text>
+          </Pressable>
+        </View>
       </View>
 
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
