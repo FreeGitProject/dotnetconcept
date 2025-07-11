@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Pressable, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Pressable, Alert, Platform,ScrollView } from 'react-native';
 import { Moon, Sun, Info, Code, Heart, Download, Upload, FileText, Share } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts } from '@/contexts/ConceptsContext';
@@ -206,6 +206,9 @@ export default function SettingsScreen() {
       flex: 1,
       backgroundColor: colors.background,
     },
+      scrollContainer: {
+      flex: 1,
+    },
     header: {
       paddingTop: 16,
       paddingHorizontal: 16,
@@ -342,147 +345,148 @@ export default function SettingsScreen() {
         <Text style={styles.title}>Settings</Text>
         <Text style={styles.subtitle}>Customize your learning experience</Text>
       </View>
+      <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Appearance</Text>
+          </View>
+          <View style={[styles.settingItem, styles.lastItem]}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.primary + '15' }]}>
+              {theme === 'dark' ? (
+                <Moon size={16} color={colors.primary} />
+              ) : (
+                <Sun size={16} color={colors.primary} />
+              )}
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingTitle}>Theme</Text>
+              <Text style={styles.settingDescription}>
+                {theme === 'dark' ? 'Dark mode enabled' : 'Light mode enabled'}
+              </Text>
+            </View>
+            <ThemeToggle />
+          </View>
+        </View>
 
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Appearance</Text>
-        </View>
-        <View style={[styles.settingItem, styles.lastItem]}>
-          <View style={[styles.settingIcon, { backgroundColor: colors.primary + '15' }]}>
-            {theme === 'dark' ? (
-              <Moon size={16} color={colors.primary} />
-            ) : (
-              <Sun size={16} color={colors.primary} />
-            )}
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Data Management</Text>
           </View>
-          <View style={styles.settingContent}>
-            <Text style={styles.settingTitle}>Theme</Text>
-            <Text style={styles.settingDescription}>
-              {theme === 'dark' ? 'Dark mode enabled' : 'Light mode enabled'}
-            </Text>
+          <View style={styles.settingItem}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.accent + '15' }]}>
+              <Download size={16} color={colors.accent} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingTitle}>Export Concepts</Text>
+              <Text style={styles.settingDescription}>
+                Backup all your concepts to a JSON file
+              </Text>
+            </View>
+            <View style={styles.statsContainer}>
+              <FileText size={12} color={colors.primary} />
+              <Text style={styles.statsText}>{concepts.length} concepts</Text>
+            </View>
+            <View style={{ marginLeft: 8 }}>
+              <Pressable
+                style={[
+                  styles.actionButton,
+                  styles.exportButton,
+                  isExporting && styles.disabledButton
+                ]}
+                onPress={handleExport}
+                disabled={isExporting || concepts.length === 0}
+              >
+                <Download size={12} color="white" />
+                <Text style={styles.actionButtonText}>
+                  {isExporting ? 'Exporting...' : 'Export'}
+                </Text>
+              </Pressable>
+            </View>
           </View>
-          <ThemeToggle />
-        </View>
-      </View>
-
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Data Management</Text>
-        </View>
-        <View style={styles.settingItem}>
-          <View style={[styles.settingIcon, { backgroundColor: colors.accent + '15' }]}>
-            <Download size={16} color={colors.accent} />
-          </View>
-          <View style={styles.settingContent}>
-            <Text style={styles.settingTitle}>Export Concepts</Text>
-            <Text style={styles.settingDescription}>
-              Backup all your concepts to a JSON file
-            </Text>
-          </View>
-          <View style={styles.statsContainer}>
-            <FileText size={12} color={colors.primary} />
-            <Text style={styles.statsText}>{concepts.length} concepts</Text>
-          </View>
-          <View style={{ marginLeft: 8 }}>
+          <View style={[styles.settingItem, styles.lastItem]}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.secondary + '15' }]}>
+              <Upload size={16} color={colors.secondary} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingTitle}>Import Concepts</Text>
+              <Text style={styles.settingDescription}>
+                Restore concepts from a backup file
+              </Text>
+            </View>
             <Pressable
               style={[
                 styles.actionButton,
-                styles.exportButton,
-                isExporting && styles.disabledButton
+                styles.importButton,
+                isImporting && styles.disabledButton
               ]}
-              onPress={handleExport}
-              disabled={isExporting || concepts.length === 0}
+              onPress={handleImport}
+              disabled={isImporting}
             >
-              <Download size={12} color="white" />
+              <Upload size={12} color="white" />
               <Text style={styles.actionButtonText}>
-                {isExporting ? 'Exporting...' : 'Export'}
+                {isImporting ? 'Importing...' : 'Import'}
               </Text>
             </Pressable>
           </View>
         </View>
-        <View style={[styles.settingItem, styles.lastItem]}>
-          <View style={[styles.settingIcon, { backgroundColor: colors.secondary + '15' }]}>
-            <Upload size={16} color={colors.secondary} />
-          </View>
-          <View style={styles.settingContent}>
-            <Text style={styles.settingTitle}>Import Concepts</Text>
-            <Text style={styles.settingDescription}>
-              Restore concepts from a backup file
-            </Text>
-          </View>
-          <Pressable
-            style={[
-              styles.actionButton,
-              styles.importButton,
-              isImporting && styles.disabledButton
-            ]}
-            onPress={handleImport}
-            disabled={isImporting}
-          >
-            <Upload size={12} color="white" />
-            <Text style={styles.actionButtonText}>
-              {isImporting ? 'Importing...' : 'Import'}
-            </Text>
-          </Pressable>
-        </View>
-      </View>
 
-      <View style={styles.section}>
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>About</Text>
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>About</Text>
+          </View>
+          <View style={styles.settingItem}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.accent + '15' }]}>
+              <Code size={16} color={colors.accent} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingTitle}>C# Concepts App</Text>
+              <Text style={styles.settingDescription}>Version 1.0.0</Text>
+            </View>
+          </View>
+          <View style={styles.settingItem}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.secondary + '15' }]}>
+              <Info size={16} color={colors.secondary} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingTitle}>Purpose</Text>
+              <Text style={styles.settingDescription}>
+                Learn and master C# and .NET concepts
+              </Text>
+            </View>
+          </View>
+          <View style={[styles.settingItem, styles.lastItem]}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.warning + '15' }]}>
+              <Share size={16} color={colors.warning} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingTitle}>Share App</Text>
+              <Text style={styles.settingDescription}>
+                Tell others about this app
+              </Text>
+            </View>
+            <Pressable
+              style={[styles.actionButton, styles.shareButton]}
+              onPress={handleShareApp}
+            >
+              <Share size={12} color="white" />
+              <Text style={styles.actionButtonText}>Share</Text>
+            </Pressable>
+          </View>
         </View>
-        <View style={styles.settingItem}>
-          <View style={[styles.settingIcon, { backgroundColor: colors.accent + '15' }]}>
-            <Code size={16} color={colors.accent} />
-          </View>
-          <View style={styles.settingContent}>
-            <Text style={styles.settingTitle}>C# Concepts App</Text>
-            <Text style={styles.settingDescription}>Version 1.0.0</Text>
-          </View>
-        </View>
-        <View style={styles.settingItem}>
-          <View style={[styles.settingIcon, { backgroundColor: colors.secondary + '15' }]}>
-            <Info size={16} color={colors.secondary} />
-          </View>
-          <View style={styles.settingContent}>
-            <Text style={styles.settingTitle}>Purpose</Text>
-            <Text style={styles.settingDescription}>
-              Learn and master C# and .NET concepts
-            </Text>
-          </View>
-        </View>
-        <View style={[styles.settingItem, styles.lastItem]}>
-          <View style={[styles.settingIcon, { backgroundColor: colors.warning + '15' }]}>
-            <Share size={16} color={colors.warning} />
-          </View>
-          <View style={styles.settingContent}>
-            <Text style={styles.settingTitle}>Share App</Text>
-            <Text style={styles.settingDescription}>
-              Tell others about this app
-            </Text>
-          </View>
-          <Pressable
-            style={[styles.actionButton, styles.shareButton]}
-            onPress={handleShareApp}
-          >
-            <Share size={12} color="white" />
-            <Text style={styles.actionButtonText}>Share</Text>
-          </Pressable>
-        </View>
-      </View>
 
-      <View style={styles.section}>
-        <View style={styles.infoSection}>
-          <Text style={styles.infoText}>
-            This app helps developers learn and reference C# and .NET concepts with detailed explanations, code examples, and practical guidance. Export your concepts to backup your learning progress or import concepts from other sources.
-          </Text>
-          <View style={styles.madeWithLove}>
-            <Text style={styles.loveText}>Made with</Text>
-            <Heart size={16} color={colors.error} fill={colors.error} />
-            <Text style={styles.loveText}>for developers</Text>
+        <View style={styles.section}>
+          <View style={styles.infoSection}>
+            <Text style={styles.infoText}>
+              This app helps developers learn and reference C# and .NET concepts with detailed explanations, code examples, and practical guidance. Export your concepts to backup your learning progress or import concepts from other sources.
+            </Text>
+            <View style={styles.madeWithLove}>
+              <Text style={styles.loveText}>Made with</Text>
+              <Heart size={16} color={colors.error} fill={colors.error} />
+              <Text style={styles.loveText}>for developers</Text>
+            </View>
           </View>
         </View>
-      </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }
