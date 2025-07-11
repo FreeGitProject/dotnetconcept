@@ -12,6 +12,7 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { ArrowLeft, Code, Lightbulb, Clock, CircleAlert as AlertCircle, CreditCard as Edit3, Trash2 } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts } from '@/contexts/ConceptsContext';
+import { RichContentViewer } from '@/components/RichContentViewer';
 
 export default function ConceptDetailScreen() {
   const { colors } = useTheme();
@@ -19,6 +20,10 @@ export default function ConceptDetailScreen() {
   const { concepts, deleteConcept } = useConcepts();
   
   const concept = concepts.find(c => c.topicID.toString() === id);
+
+  const handleEdit = () => {
+    router.push(`/concept/edit/${id}`);
+  };
 const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -156,10 +161,6 @@ const styles = StyleSheet.create({
       fontWeight: '500',
     },
   });
-  const handleEdit = () => {
-    router.push(`/concept/edit/${id}`);
-  };
-
   const handleDelete = () => {
     Alert.alert(
       'Delete Concept',
@@ -237,7 +238,7 @@ const styles = StyleSheet.create({
               <Lightbulb size={20} color={colors.primary} style={styles.sectionIcon} />
               <Text style={styles.sectionTitle}>Definition</Text>
             </View>
-            <Text style={styles.sectionContent}>{concept.definition}</Text>
+            <RichContentViewer content={concept.definition} />
           </View>
 
           <View style={styles.section}>
@@ -245,7 +246,7 @@ const styles = StyleSheet.create({
               <AlertCircle size={20} color={colors.secondary} style={styles.sectionIcon} />
               <Text style={styles.sectionTitle}>Detailed Explanation</Text>
             </View>
-            <Text style={styles.sectionContent}>{concept.detailedExplanation}</Text>
+            <RichContentViewer content={concept.detailedExplanation} />
           </View>
 
           {concept.whenToUse && (
@@ -254,7 +255,7 @@ const styles = StyleSheet.create({
                 <Clock size={20} color={colors.accent} style={styles.sectionIcon} />
                 <Text style={styles.sectionTitle}>When to Use</Text>
               </View>
-              <Text style={styles.sectionContent}>{concept.whenToUse}</Text>
+              <RichContentViewer content={concept.whenToUse} />
             </View>
           )}
 
@@ -264,7 +265,7 @@ const styles = StyleSheet.create({
                 <AlertCircle size={20} color={colors.warning} style={styles.sectionIcon} />
                 <Text style={styles.sectionTitle}>Why You Need It</Text>
               </View>
-              <Text style={styles.sectionContent}>{concept.whyNeed}</Text>
+              <RichContentViewer content={concept.whyNeed} />
             </View>
           )}
 
