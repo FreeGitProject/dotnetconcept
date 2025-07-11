@@ -126,6 +126,7 @@ export default function AddConceptScreen() {
     },
     content: {
       padding: 16,
+      paddingBottom: 120, // Extra space for floating search button
     },
     fieldContainer: {
       marginBottom: 20,
