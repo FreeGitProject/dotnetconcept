@@ -32,3 +32,22 @@ and create preview
  for check packed updated or not 
  npx expo install --check
  
+ 
+ 07/04/2025
+ try to create apk with out expo site 
+ useing android studio 
+ 
+ here is eas.json 
+  "distribution": "internal",
+       "android": {
+        "buildType": "apk"
+      }
+ here id a link 
+ 
+ https://chatgpt.com/share/68676967-3e60-800f-a25d-aab380d97b0d
+
+First run this 
+npx expo prebuild 
+to create android file than open in android studio
+
+
