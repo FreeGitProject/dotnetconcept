@@ -1,6 +1,6 @@
 {
   "expo": {
-    "name": "bolt-expo-nativewind",
+    "name": "myconcepts",
     "slug": "dotnet-concepts-app",
     "version": "1.0.0",
     "orientation": "portrait",
@@ -32,6 +32,7 @@
     },
     "owner": "avinashgupta380",
     "android": {
+      "versionCode": 2,
       "package": "com.avinashgupta380.dotnetconceptsapp"
     }
   }
