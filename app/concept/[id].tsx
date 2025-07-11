@@ -13,6 +13,7 @@ import { ArrowLeft, Code, Lightbulb, Clock, CircleAlert as AlertCircle, CreditCa
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts } from '@/contexts/ConceptsContext';
 import { RichContentViewer } from '@/components/RichContentViewer';
+import { CodeBlock } from '@/components/CodeBlock';
 
 export default function ConceptDetailScreen() {
   const { colors } = useTheme();
@@ -24,7 +25,30 @@ export default function ConceptDetailScreen() {
   const handleEdit = () => {
     router.push(`/concept/edit/${id}`);
   };
-const styles = StyleSheet.create({
+
+  const handleDelete = () => {
+    Alert.alert(
+      'Delete Concept',
+      `Are you sure you want to delete "${concept?.title}"? This action cannot be undone.`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            if (concept) {
+              deleteConcept(concept.topicID);
+              router.back();
+            }
+          }
+        }
+      ]
+    );
+  };
+  const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
@@ -137,20 +161,6 @@ const styles = StyleSheet.create({
       color: colors.text,
       lineHeight: 24,
     },
-    codeSection: {
-      backgroundColor: colors.background,
-      borderRadius: 12,
-      padding: 16,
-      marginTop: 12,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    codeText: {
-      fontFamily: 'monospace',
-      fontSize: 14,
-      color: colors.text,
-      lineHeight: 20,
-    },
     errorContainer: {
       flex: 1,
       alignItems: 'center',
@@ -161,29 +171,6 @@ const styles = StyleSheet.create({
       fontWeight: '500',
     },
   });
-  const handleDelete = () => {
-    Alert.alert(
-      'Delete Concept',
-      `Are you sure you want to delete "${concept?.title}"? This action cannot be undone.`,
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => {
-            if (concept) {
-              deleteConcept(concept.topicID);
-              router.back();
-            }
-          }
-        }
-      ]
-    );
-  };
-
   if (!concept) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -195,9 +182,6 @@ const styles = StyleSheet.create({
       </SafeAreaView>
     );
   }
-
-  
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -275,9 +259,7 @@ const styles = StyleSheet.create({
                 <Code size={20} color={colors.accent} style={styles.sectionIcon} />
                 <Text style={styles.sectionTitle}>Code Example</Text>
               </View>
-              <View style={styles.codeSection}>
-                <Text style={styles.codeText}>{concept.codeExample}</Text>
-              </View>
+              <CodeBlock code={concept.codeExample} language="csharp" />
             </View>
           )}
         </View>

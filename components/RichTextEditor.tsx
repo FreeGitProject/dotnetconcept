@@ -22,6 +22,7 @@ import {
   Palette
 } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
+import { CodeBlock } from '@/components/CodeBlock';
 
 interface RichTextEditorProps {
   value: string;
@@ -70,7 +71,7 @@ export function RichTextEditor({
   const formatCode = () => insertText('`', '`');
   const formatCodeBlock = () => insertText('\n```\n', '\n```\n');
   const formatQuote = () => insertText('\n> ', '');
-  const formatBulletList = () => insertText('\n• ', '');
+  const formatBulletList = () => insertText('\n- ', '');
   const formatNumberedList = () => insertText('\n1. ', '');
 
   const renderPreview = (text: string) => {
@@ -277,9 +278,13 @@ export function RichTextEditor({
 
         {isPreviewMode ? (
           <ScrollView style={styles.previewContainer}>
-            <Text style={styles.previewText}>
-              {value || 'Nothing to preview...'}
-            </Text>
+            {isCodeEditor && value ? (
+              <CodeBlock code={value} language="csharp" />
+            ) : (
+              <Text style={styles.previewText}>
+                {value || 'Nothing to preview...'}
+              </Text>
+            )}
           </ScrollView>
         ) : (
           <TextInput
