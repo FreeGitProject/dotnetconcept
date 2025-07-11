@@ -70,7 +70,7 @@ export function RichTextEditor({
   const formatCode = () => insertText('`', '`');
   const formatCodeBlock = () => insertText('\n```\n', '\n```\n');
   const formatQuote = () => insertText('\n> ', '');
-  const formatBulletList = () => insertText('\n- ', '');
+  const formatBulletList = () => insertText('\n• ', '');
   const formatNumberedList = () => insertText('\n1. ', '');
 
   const renderPreview = (text: string) => {
