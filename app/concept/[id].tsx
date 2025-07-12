@@ -12,6 +12,8 @@ import { useLocalSearchParams, router } from 'expo-router';
 import { ArrowLeft, Code, Lightbulb, Clock, CircleAlert as AlertCircle, CreditCard as Edit3, Trash2 } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts } from '@/contexts/ConceptsContext';
+import { RichContentViewer } from '@/components/RichContentViewer';
+import { CodeBlock } from '@/components/CodeBlock';
 
 export default function ConceptDetailScreen() {
   const { colors } = useTheme();
@@ -19,7 +21,34 @@ export default function ConceptDetailScreen() {
   const { concepts, deleteConcept } = useConcepts();
   
   const concept = concepts.find(c => c.topicID.toString() === id);
-const styles = StyleSheet.create({
+
+  const handleEdit = () => {
+    router.push(`/concept/edit/${id}`);
+  };
+
+  const handleDelete = () => {
+    Alert.alert(
+      'Delete Concept',
+      `Are you sure you want to delete "${concept?.title}"? This action cannot be undone.`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel'
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            if (concept) {
+              deleteConcept(concept.topicID);
+              router.back();
+            }
+          }
+        }
+      ]
+    );
+  };
+  const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
@@ -132,20 +161,6 @@ const styles = StyleSheet.create({
       color: colors.text,
       lineHeight: 24,
     },
-    codeSection: {
-      backgroundColor: colors.background,
-      borderRadius: 12,
-      padding: 16,
-      marginTop: 12,
-      borderWidth: 1,
-      borderColor: colors.border,
-    },
-    codeText: {
-      fontFamily: 'monospace',
-      fontSize: 14,
-      color: colors.text,
-      lineHeight: 20,
-    },
     errorContainer: {
       flex: 1,
       alignItems: 'center',
@@ -156,33 +171,6 @@ const styles = StyleSheet.create({
       fontWeight: '500',
     },
   });
-  const handleEdit = () => {
-    router.push(`/concept/edit/${id}`);
-  };
-
-  const handleDelete = () => {
-    Alert.alert(
-      'Delete Concept',
-      `Are you sure you want to delete "${concept?.title}"? This action cannot be undone.`,
-      [
-        {
-          text: 'Cancel',
-          style: 'cancel'
-        },
-        {
-          text: 'Delete',
-          style: 'destructive',
-          onPress: () => {
-            if (concept) {
-              deleteConcept(concept.topicID);
-              router.back();
-            }
-          }
-        }
-      ]
-    );
-  };
-
   if (!concept) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -194,9 +182,6 @@ const styles = StyleSheet.create({
       </SafeAreaView>
     );
   }
-
-  
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
@@ -237,7 +222,7 @@ const styles = StyleSheet.create({
               <Lightbulb size={20} color={colors.primary} style={styles.sectionIcon} />
               <Text style={styles.sectionTitle}>Definition</Text>
             </View>
-            <Text style={styles.sectionContent}>{concept.definition}</Text>
+            <RichContentViewer content={concept.definition} />
           </View>
 
           <View style={styles.section}>
@@ -245,7 +230,7 @@ const styles = StyleSheet.create({
               <AlertCircle size={20} color={colors.secondary} style={styles.sectionIcon} />
               <Text style={styles.sectionTitle}>Detailed Explanation</Text>
             </View>
-            <Text style={styles.sectionContent}>{concept.detailedExplanation}</Text>
+            <RichContentViewer content={concept.detailedExplanation} />
           </View>
 
           {concept.whenToUse && (
@@ -254,7 +239,7 @@ const styles = StyleSheet.create({
                 <Clock size={20} color={colors.accent} style={styles.sectionIcon} />
                 <Text style={styles.sectionTitle}>When to Use</Text>
               </View>
-              <Text style={styles.sectionContent}>{concept.whenToUse}</Text>
+              <RichContentViewer content={concept.whenToUse} />
             </View>
           )}
 
@@ -264,7 +249,7 @@ const styles = StyleSheet.create({
                 <AlertCircle size={20} color={colors.warning} style={styles.sectionIcon} />
                 <Text style={styles.sectionTitle}>Why You Need It</Text>
               </View>
-              <Text style={styles.sectionContent}>{concept.whyNeed}</Text>
+              <RichContentViewer content={concept.whyNeed} />
             </View>
           )}
 
@@ -274,9 +259,7 @@ const styles = StyleSheet.create({
                 <Code size={20} color={colors.accent} style={styles.sectionIcon} />
                 <Text style={styles.sectionTitle}>Code Example</Text>
               </View>
-              <View style={styles.codeSection}>
-                <Text style={styles.codeText}>{concept.codeExample}</Text>
-              </View>
+              <CodeBlock code={concept.codeExample} language="csharp" />
             </View>
           )}
         </View>

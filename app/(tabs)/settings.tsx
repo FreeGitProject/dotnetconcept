@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Pressable, Alert, Platform } from 'react-native';
+import { View, Text, StyleSheet, SafeAreaView, Pressable, Alert, Platform,ScrollView } from 'react-native';
 import { Moon, Sun, Info, Code, Heart, Download, Upload, FileText, Share } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts } from '@/contexts/ConceptsContext';
@@ -194,7 +194,7 @@ export default function SettingsScreen() {
     } else {
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync('', {
-          //message: shareMessage,
+         // message: shareMessage,
           dialogTitle: 'Share C# Concepts App'
         });
       }
@@ -334,6 +334,10 @@ export default function SettingsScreen() {
       color: colors.textSecondary,
       marginHorizontal: 4,
     },
+    // Add padding for floating search button
+    scrollContent: {
+      paddingBottom: 120,
+    },
   });
 
   return (
@@ -343,6 +347,7 @@ export default function SettingsScreen() {
         <Text style={styles.subtitle}>Customize your learning experience</Text>
       </View>
 
+      <ScrollView contentContainerStyle={styles.scrollContent}>
       <View style={styles.section}>
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>Appearance</Text>
@@ -483,6 +488,7 @@ export default function SettingsScreen() {
           </View>
         </View>
       </View>
+      </ScrollView>
     </SafeAreaView>
   );
 }

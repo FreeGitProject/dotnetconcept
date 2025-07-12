@@ -96,7 +96,7 @@ export default function HomeScreen() {
       flex: 1,
     },
     listContent: {
-      paddingBottom: 100,
+      paddingBottom: 120, // Extra space for floating search button
     },
     emptyState: {
       flex: 1,
