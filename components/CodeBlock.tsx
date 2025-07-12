@@ -79,11 +79,9 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
       const tokens: any[] = [];
       let currentIndex = 0;
       
-      // Process each character in the line
       while (currentIndex < line.length) {
         const remainingLine = line.substring(currentIndex);
         
-        // Skip whitespace
         if (remainingLine.match(/^\s+/)) {
           const whitespace = remainingLine.match(/^\s+/)![0];
           tokens.push({ type: 'whitespace', content: whitespace });
@@ -91,13 +89,11 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
           continue;
         }
         
-        // Comments
         if (remainingLine.startsWith('//')) {
           tokens.push({ type: 'comment', content: remainingLine });
           break;
         }
         
-        // Multi-line comments
         if (remainingLine.startsWith('/*')) {
           const endIndex = remainingLine.indexOf('*/');
           if (endIndex !== -1) {
@@ -108,7 +104,6 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
           }
         }
         
-        // Strings
         if (remainingLine.startsWith('"')) {
           const stringMatch = remainingLine.match(/^"([^"\\]|\\.)*"/);
           if (stringMatch) {
@@ -118,7 +113,6 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
           }
         }
         
-        // Numbers
         if (remainingLine.match(/^\d+(\.\d+)?/)) {
           const numberMatch = remainingLine.match(/^\d+(\.\d+)?/)![0];
           tokens.push({ type: 'number', content: numberMatch });
@@ -126,7 +120,6 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
           continue;
         }
         
-        // Keywords and identifiers
         if (remainingLine.match(/^[a-zA-Z_][a-zA-Z0-9_]*/)) {
           const identifier = remainingLine.match(/^[a-zA-Z_][a-zA-Z0-9_]*/)![0];
           
@@ -146,7 +139,6 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
           continue;
         }
         
-        // Operators and punctuation
         const char = remainingLine[0];
         if ('{}()[];,.=+-*/<>!&|'.includes(char)) {
           tokens.push({ type: 'operator', content: char });
@@ -181,16 +173,16 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
     container: {
       backgroundColor: codeTheme.background,
       borderRadius: 12,
-      padding: 16,
+      padding: 12,
       marginTop: 12,
       borderWidth: 1,
       borderColor: colors.border,
-      maxHeight: isFullscreen ? undefined : 400,
+      maxHeight: 400,
+      height: 400,
     },
     fullscreenContainer: {
-      backgroundColor: codeTheme.background,
       flex: 1,
-      padding: 16,
+      backgroundColor: codeTheme.background,
     },
     header: {
       flexDirection: 'row',
@@ -255,14 +247,15 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
     greenDot: {
       backgroundColor: '#27ca3f',
     },
-    scrollView: {
-      maxHeight: isFullscreen ? undefined : 300,
-    },
-    fullscreenScrollView: {
+    verticalScroll: {
       flex: 1,
+      width: '100%',
+    },
+    horizontalScroll: {
+      minWidth: '100%',
     },
     codeContent: {
-      minWidth: '100%',
+      paddingBottom: 20,
     },
     line: {
       flexDirection: 'row',
@@ -316,32 +309,35 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
 
   const CodeContent = () => (
     <ScrollView 
-      style={isFullscreen ? styles.fullscreenScrollView : styles.scrollView}
-      horizontal
-      showsHorizontalScrollIndicator={true}
+      style={styles.verticalScroll}
       showsVerticalScrollIndicator={true}
-      nestedScrollEnabled={true}
     >
-      <View style={styles.codeContent}>
-        {highlightedLines.map((line, index) => (
-          <View key={index} style={styles.line}>
-            <Text style={styles.lineNumber}>{line.lineNumber}</Text>
-            <View style={styles.lineContent}>
-              {line.tokens.map((token, tokenIndex) => (
-                <Text
-                  key={tokenIndex}
-                  style={[
-                    styles.token,
-                    { color: getTokenColor(token.type) }
-                  ]}
-                >
-                  {token.content}
-                </Text>
-              ))}
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={true}
+        contentContainerStyle={styles.codeContent}
+      >
+        <View style={styles.horizontalScroll}>
+          {highlightedLines.map((line, index) => (
+            <View key={index} style={styles.line}>
+              <Text style={styles.lineNumber}>{line.lineNumber}</Text>
+              <View style={styles.lineContent}>
+                {line.tokens.map((token, tokenIndex) => (
+                  <Text
+                    key={tokenIndex}
+                    style={[
+                      styles.token,
+                      { color: getTokenColor(token.type) }
+                    ]}
+                  >
+                    {token.content}
+                  </Text>
+                ))}
+              </View>
             </View>
-          </View>
-        ))}
-      </View>
+          ))}
+        </View>
+      </ScrollView>
     </ScrollView>
   );
 
