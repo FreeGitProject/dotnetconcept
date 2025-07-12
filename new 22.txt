@@ -51,3 +51,14 @@ npx expo prebuild
 to create android file than open in android studio
 
 
+For checo
+npx expo-doctor
+
+
+now proversion are done 
+
+and live on my phone 
+
+Use **bold**, *italic*,  •lists. Toggle preview to see formatting.
+
+

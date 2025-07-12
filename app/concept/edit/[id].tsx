@@ -3,7 +3,6 @@ import {
   View, 
   Text, 
   StyleSheet, 
-  TextInput, 
   ScrollView, 
   Pressable, 
   SafeAreaView,
@@ -13,6 +12,7 @@ import { Save, ArrowLeft, X } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts, Concept } from '@/contexts/ConceptsContext';
 import { useLocalSearchParams, router } from 'expo-router';
+import { RichTextEditor } from '@/components/RichTextEditor';
 
 export default function EditConceptScreen() {
   const { colors } = useTheme();
@@ -20,6 +20,18 @@ export default function EditConceptScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   
   const concept = concepts.find(c => c.topicID.toString() === id);
+  
+  const [formData, setFormData] = useState({
+    title: '',
+    definition: '',
+    detailedExplanation: '',
+    whenToUse: '',
+    whyNeed: '',
+    codeExample: '',
+    keyword: '',
+  });
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -87,72 +99,18 @@ export default function EditConceptScreen() {
       padding: 16,
     },
     fieldContainer: {
-      marginBottom: 24,
-    },
-    label: {
-      fontSize: 16,
-      fontWeight: '600',
-      color: colors.text,
-      marginBottom: 8,
-    },
-    requiredIndicator: {
-      color: colors.error,
-    },
-    input: {
-      backgroundColor: colors.surface,
-      borderWidth: 1,
-      borderColor: colors.border,
-      borderRadius: 12,
-      padding: 16,
-      fontSize: 16,
-      color: colors.text,
-      minHeight: 50,
-    },
-    textArea: {
-      minHeight: 100,
-      textAlignVertical: 'top',
-    },
-    codeInput: {
-      minHeight: 150,
-      fontFamily: 'monospace',
-      fontSize: 14,
-    },
-    errorInput: {
-      borderColor: colors.error,
-    },
-    errorText: {
-      color: colors.error,
-      fontSize: 14,
-      marginTop: 4,
-    },
-    helpText: {
-      color: colors.textSecondary,
-      fontSize: 14,
-      marginTop: 4,
-      fontStyle: 'italic',
+      marginBottom: 20,
     },
     errorContainer: {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
     },
-    // errorText: {
-    //   fontSize: 18,
-    //   fontWeight: '500',
-    // },
+    errorText: {
+      fontSize: 18,
+      fontWeight: '500',
+    },
   });
-  const [formData, setFormData] = useState({
-    title: '',
-    definition: '',
-    detailedExplanation: '',
-    whenToUse: '',
-    whyNeed: '',
-    codeExample: '',
-    keyword: '',
-  });
-
-  const [errors, setErrors] = useState<Record<string, string>>({});
-
   useEffect(() => {
     if (concept) {
       setFormData({
@@ -243,7 +201,7 @@ export default function EditConceptScreen() {
     }
   };
 
-  
+
 
   return (
     <SafeAreaView style={styles.container}>
@@ -274,103 +232,80 @@ export default function EditConceptScreen() {
       <ScrollView style={styles.scrollContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.content}>
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>
-              Title <Text style={styles.requiredIndicator}>*</Text>
-            </Text>
-            <TextInput
-              style={[styles.input, errors.title && styles.errorInput]}
+            <RichTextEditor
+              label="Title"
               value={formData.title}
               onChangeText={(value) => updateField('title', value)}
               placeholder="Enter concept title"
-              placeholderTextColor={colors.textSecondary}
+              error={errors.title}
+              multiline={false}
+              minHeight={50}
             />
-            {errors.title && <Text style={styles.errorText}>{errors.title}</Text>}
           </View>
 
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>
-              Definition <Text style={styles.requiredIndicator}>*</Text>
-            </Text>
-            <TextInput
-              style={[styles.input, styles.textArea, errors.definition && styles.errorInput]}
+            <RichTextEditor
+              label="Definition"
               value={formData.definition}
               onChangeText={(value) => updateField('definition', value)}
               placeholder="Provide a concise definition"
-              placeholderTextColor={colors.textSecondary}
-              multiline
+              error={errors.definition}
+              minHeight={100}
             />
-            {errors.definition && <Text style={styles.errorText}>{errors.definition}</Text>}
           </View>
 
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>
-              Detailed Explanation <Text style={styles.requiredIndicator}>*</Text>
-            </Text>
-            <TextInput
-              style={[styles.input, styles.textArea, errors.detailedExplanation && styles.errorInput]}
+            <RichTextEditor
+              label="Detailed Explanation"
               value={formData.detailedExplanation}
               onChangeText={(value) => updateField('detailedExplanation', value)}
               placeholder="Provide a detailed explanation of the concept"
-              placeholderTextColor={colors.textSecondary}
-              multiline
+              error={errors.detailedExplanation}
+              minHeight={150}
             />
-            {errors.detailedExplanation && <Text style={styles.errorText}>{errors.detailedExplanation}</Text>}
           </View>
 
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>When to Use</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
+            <RichTextEditor
+              label="When to Use"
               value={formData.whenToUse}
               onChangeText={(value) => updateField('whenToUse', value)}
               placeholder="Describe when this concept should be used"
-              placeholderTextColor={colors.textSecondary}
-              multiline
+              minHeight={100}
             />
           </View>
 
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Why Need It</Text>
-            <TextInput
-              style={[styles.input, styles.textArea]}
+            <RichTextEditor
+              label="Why Need It"
               value={formData.whyNeed}
               onChangeText={(value) => updateField('whyNeed', value)}
               placeholder="Explain why this concept is important"
-              placeholderTextColor={colors.textSecondary}
-              multiline
+              minHeight={100}
             />
           </View>
 
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>Code Example</Text>
-            <TextInput
-              style={[styles.input, styles.codeInput]}
+            <RichTextEditor
+              label="Code Example"
               value={formData.codeExample}
               onChangeText={(value) => updateField('codeExample', value)}
               placeholder="Provide a code example demonstrating the concept"
-              placeholderTextColor={colors.textSecondary}
-              multiline
+              minHeight={200}
+              isCodeEditor={true}
             />
-            <Text style={styles.helpText}>
-              Use proper indentation and formatting for better readability
-            </Text>
           </View>
 
           <View style={styles.fieldContainer}>
-            <Text style={styles.label}>
-              Keywords <Text style={styles.requiredIndicator}>*</Text>
-            </Text>
-            <TextInput
-              style={[styles.input, errors.keyword && styles.errorInput]}
+            <RichTextEditor
+              label="Keywords"
               value={formData.keyword}
               onChangeText={(value) => updateField('keyword', value)}
               placeholder="Enter comma-separated keywords"
-              placeholderTextColor={colors.textSecondary}
+              error={errors.keyword}
+              multiline={false}
+              minHeight={50}
             />
-            {errors.keyword && <Text style={styles.errorText}>{errors.keyword}</Text>}
-            <Text style={styles.helpText}>
-              Separate multiple keywords with commas (e.g., "DI, IoC, Services")
-            </Text>
           </View>
         </View>
       </ScrollView>
