@@ -5,9 +5,9 @@ import {
   StyleSheet, 
   ScrollView, 
   Pressable, 
-  SafeAreaView,
   Alert
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Save, ArrowLeft, X } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts, Concept } from '@/contexts/ConceptsContext';
@@ -33,8 +33,7 @@ export default function EditConceptScreen() {
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const styles = StyleSheet.create({
+ const styles = StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
@@ -113,7 +112,6 @@ export default function EditConceptScreen() {
       fontWeight: '500',
     },
   });
-
   useEffect(() => {
     if (concept) {
       setFormData({
@@ -204,6 +202,8 @@ export default function EditConceptScreen() {
       setErrors(prev => ({ ...prev, [field]: '' }));
     }
   };
+
+ 
 
   return (
     <SafeAreaView style={styles.container}>

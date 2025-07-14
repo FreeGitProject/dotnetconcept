@@ -4,10 +4,10 @@ import {
   Text, 
   StyleSheet, 
   ScrollView, 
-  SafeAreaView, 
   Pressable,
   Alert 
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, router } from 'expo-router';
 import { ArrowLeft, Code, Lightbulb, Clock, CircleAlert as AlertCircle, CreditCard as Edit3, Trash2, GitCompare } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
@@ -50,7 +50,7 @@ export default function ConceptDetailScreen() {
     );
   };
 
-
+  
 
   const styles = StyleSheet.create({
     container: {
@@ -175,7 +175,7 @@ export default function ConceptDetailScreen() {
       fontWeight: '500',
     },
   });
-  if (!concept) {
+if (!concept) {
     return (
       <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.errorContainer}>

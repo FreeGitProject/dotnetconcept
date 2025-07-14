@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Pressable, Alert, Platform,ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Pressable, Alert, Platform, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Moon, Sun, Info, Code, Heart, Download, Upload, FileText, Share, Volume2, VolumeX, Settings as SettingsIcon } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts } from '@/contexts/ConceptsContext';
@@ -197,7 +198,7 @@ export default function SettingsScreen() {
     } else {
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync('', {
-         // message: shareMessage,
+       
           dialogTitle: 'Share C# Concepts App'
         });
       }
