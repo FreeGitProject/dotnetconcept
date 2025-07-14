@@ -34,7 +34,8 @@ public class UserController
         _emailService.SendEmail("Welcome!");
     }
 }`,
-    keyword: "DI, IoC, Inversion of Control, Services"
+    keyword: "DI, IoC, Inversion of Control, Services",
+    differences: "**DI vs Service Locator**: DI pushes dependencies into objects, while Service Locator requires objects to pull dependencies. **DI vs Factory Pattern**: DI provides dependencies automatically, while Factory Pattern requires manual creation calls. **DI vs Singleton**: DI manages object lifetime externally, while Singleton manages its own lifetime internally."
   },
   {
     topicID: 2,
@@ -66,7 +67,8 @@ public class UserRepository
         // Save user to database
     }
 }`,
-    keyword: "SRP, OCP, LSP, ISP, DIP, Design Principles"
+    keyword: "SRP, OCP, LSP, ISP, DIP, Design Principles",
+    differences: "**SOLID vs GRASP**: SOLID focuses on class design and dependencies, while GRASP focuses on object responsibilities and interactions. **SOLID vs Design Patterns**: SOLID provides principles for good design, while Design Patterns provide specific solutions to common problems. **SOLID vs Clean Architecture**: SOLID guides individual class design, while Clean Architecture guides overall system structure."
   },
   {
     topicID: 3,
@@ -96,7 +98,8 @@ public async Task ProcessUserAsync()
         Console.WriteLine($"Error: {ex.Message}");
     }
 }`,
-    keyword: "Asynchronous, Task, Threading, Non-blocking"
+    keyword: "Asynchronous, Task, Threading, Non-blocking",
+    differences: "**Async/Await vs Task.Run**: Async/await is for I/O operations, Task.Run is for CPU-intensive work. **Async/Await vs Threads**: Async/await doesn't create new threads for I/O, while Thread class creates OS threads. **Async/Await vs Callbacks**: Async/await provides linear code flow, while callbacks can lead to callback hell and complex error handling."
   },
   {
     topicID: 4,
@@ -125,7 +128,8 @@ var activeAdultUsers = users
     .OrderBy(u => u.Name)
     .Select(u => new { u.Name, u.Email })
     .ToList();`,
-    keyword: "Query, Lambda, Enumerable, IQueryable"
+    keyword: "Query, Lambda, Enumerable, IQueryable",
+    differences: "**LINQ vs SQL**: LINQ is strongly-typed and compile-time checked, while SQL is string-based and runtime checked. **LINQ to Objects vs LINQ to Entities**: LINQ to Objects works in memory, while LINQ to Entities translates to database queries. **Query Syntax vs Method Syntax**: Query syntax is more readable for complex queries, while Method syntax is more flexible and supports all LINQ operators."
   },
   {
     topicID: 5,
@@ -160,7 +164,8 @@ using (var context = new AppDbContext())
         .Include(u => u.Orders)
         .FirstOrDefaultAsync(u => u.Id == 1);
 }`,
-    keyword: "ORM, Database, DbContext, Migrations"
+    keyword: "ORM, Database, DbContext, Migrations",
+    differences: "**EF Core vs Dapper**: EF Core is a full ORM with change tracking, while Dapper is a micro-ORM for performance. **EF Core vs ADO.NET**: EF Core provides object mapping and LINQ, while ADO.NET requires manual SQL and data mapping. **Code First vs Database First**: Code First defines models in code and generates database, while Database First generates models from existing database."
   },
   {
     topicID: 6,
@@ -192,6 +197,7 @@ using (var context = new AppDbContext())
 
 // In Startup.cs or Program.cs
 app.UseMiddleware<RequestLoggingMiddleware>();`,
-    keyword: "Pipeline, Request, Response, ASP.NET Core"
+    keyword: "Pipeline, Request, Response, ASP.NET Core",
+    differences: "**Middleware vs Filters**: Middleware runs for all requests, while Filters run only for MVC actions. **Middleware vs HTTP Modules**: Middleware is cross-platform and lightweight, while HTTP Modules are IIS-specific and heavier. **Custom Middleware vs Built-in Middleware**: Custom middleware provides specific business logic, while built-in middleware handles common concerns like authentication and routing."
   }
 ];

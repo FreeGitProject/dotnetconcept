@@ -9,11 +9,12 @@ import {
   Alert 
 } from 'react-native';
 import { useLocalSearchParams, router } from 'expo-router';
-import { ArrowLeft, Code, Lightbulb, Clock, CircleAlert as AlertCircle, CreditCard as Edit3, Trash2 } from 'lucide-react-native';
+import { ArrowLeft, Code, Lightbulb, Clock, CircleAlert as AlertCircle, CreditCard as Edit3, Trash2, GitCompare } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts } from '@/contexts/ConceptsContext';
 import { RichContentViewer } from '@/components/RichContentViewer';
 import { CodeBlock } from '@/components/CodeBlock';
+//import { TextWithSpeaker } from '@/components/TextWithSpeaker';
 
 export default function ConceptDetailScreen() {
   const { colors } = useTheme();
@@ -48,6 +49,9 @@ export default function ConceptDetailScreen() {
       ]
     );
   };
+
+
+
   const styles = StyleSheet.create({
     container: {
       flex: 1,
@@ -222,7 +226,9 @@ export default function ConceptDetailScreen() {
               <Lightbulb size={20} color={colors.primary} style={styles.sectionIcon} />
               <Text style={styles.sectionTitle}>Definition</Text>
             </View>
-            <RichContentViewer content={concept.definition} />
+         
+              <RichContentViewer content={concept.definition} />
+           
           </View>
 
           <View style={styles.section}>
@@ -230,7 +236,9 @@ export default function ConceptDetailScreen() {
               <AlertCircle size={20} color={colors.secondary} style={styles.sectionIcon} />
               <Text style={styles.sectionTitle}>Detailed Explanation</Text>
             </View>
-            <RichContentViewer content={concept.detailedExplanation} />
+         
+              <RichContentViewer content={concept.detailedExplanation} />
+           
           </View>
 
           {concept.whenToUse && (
@@ -239,7 +247,9 @@ export default function ConceptDetailScreen() {
                 <Clock size={20} color={colors.accent} style={styles.sectionIcon} />
                 <Text style={styles.sectionTitle}>When to Use</Text>
               </View>
-              <RichContentViewer content={concept.whenToUse} />
+             
+                <RichContentViewer content={concept.whenToUse} />
+              
             </View>
           )}
 
@@ -249,7 +259,9 @@ export default function ConceptDetailScreen() {
                 <AlertCircle size={20} color={colors.warning} style={styles.sectionIcon} />
                 <Text style={styles.sectionTitle}>Why You Need It</Text>
               </View>
-              <RichContentViewer content={concept.whyNeed} />
+             
+                <RichContentViewer content={concept.whyNeed} />
+              
             </View>
           )}
 
@@ -260,6 +272,18 @@ export default function ConceptDetailScreen() {
                 <Text style={styles.sectionTitle}>Code Example</Text>
               </View>
               <CodeBlock code={concept.codeExample} language="csharp" />
+            </View>
+          )}
+
+          {concept.differences && (
+            <View style={styles.section}>
+              <View style={styles.sectionHeader}>
+                <GitCompare size={20} color={colors.secondary} style={styles.sectionIcon} />
+                <Text style={styles.sectionTitle}>Key Differences</Text>
+              </View>
+            
+                <RichContentViewer content={concept.differences} />
+            
             </View>
           )}
         </View>

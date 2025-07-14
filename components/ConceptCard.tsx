@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 import { ChevronRight, Code, Lightbulb, Clock, AlertCircle } from 'lucide-react-native';
+import { GitCompare } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Concept } from '@/contexts/ConceptsContext';
+//import { SpeakerButton } from '@/components/SpeakerButton';
 
 interface ConceptCardProps {
   concept: Concept;
@@ -13,6 +15,7 @@ export function ConceptCard({ concept, onPress }: ConceptCardProps) {
   const { colors } = useTheme();
 
   const hasOptionalSections = concept.whenToUse || concept.whyNeed || concept.codeExample;
+  const hasDifferences = concept.differences;
 
   const styles = StyleSheet.create({
     container: {
@@ -111,6 +114,15 @@ export function ConceptCard({ concept, onPress }: ConceptCardProps) {
     chevron: {
       opacity: 0.7,
     },
+    cardFooter: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'flex-end',
+      marginBottom: 8,
+    },
+    speakerButton: {
+      padding: 6,
+    },
   });
 
   return (
@@ -135,6 +147,8 @@ export function ConceptCard({ concept, onPress }: ConceptCardProps) {
       <Text style={styles.definition} numberOfLines={3}>
         {concept.definition}
       </Text>
+      
+
 
       {hasOptionalSections && (
         <View style={styles.sectionsContainer}>
@@ -157,6 +171,12 @@ export function ConceptCard({ concept, onPress }: ConceptCardProps) {
                 <Text style={[styles.sectionText, { color: colors.secondary }]}>Code</Text>
               </View>
             )}
+            {concept.differences && (
+              <View style={styles.sectionIndicator}>
+                <GitCompare size={12} color={colors.warning} />
+                <Text style={[styles.sectionText, { color: colors.warning }]}>Diff</Text>
+              </View>
+            )}
           </View>
         </View>
       )}
@@ -165,7 +185,7 @@ export function ConceptCard({ concept, onPress }: ConceptCardProps) {
         <View style={styles.completenessIndicator}>
           <Lightbulb size={14} color={colors.accent} />
           <Text style={styles.completenessText}>
-            {hasOptionalSections ? 'Complete' : 'Basic'}
+            {hasOptionalSections && hasDifferences ? 'Complete' : hasOptionalSections ? 'Good' : 'Basic'}
           </Text>
         </View>
       </View>
