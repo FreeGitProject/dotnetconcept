@@ -14,7 +14,7 @@ import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts } from '@/contexts/ConceptsContext';
 import { RichContentViewer } from '@/components/RichContentViewer';
 import { CodeBlock } from '@/components/CodeBlock';
-//import { TextWithSpeaker } from '@/components/TextWithSpeaker';
+import { TextWithSpeaker } from '@/components/TextWithSpeaker';
 
 export default function ConceptDetailScreen() {
   const { colors } = useTheme();
@@ -226,9 +226,9 @@ export default function ConceptDetailScreen() {
               <Lightbulb size={20} color={colors.primary} style={styles.sectionIcon} />
               <Text style={styles.sectionTitle}>Definition</Text>
             </View>
-         
+            <TextWithSpeaker text={concept.definition}>
               <RichContentViewer content={concept.definition} />
-           
+            </TextWithSpeaker>
           </View>
 
           <View style={styles.section}>
@@ -236,9 +236,9 @@ export default function ConceptDetailScreen() {
               <AlertCircle size={20} color={colors.secondary} style={styles.sectionIcon} />
               <Text style={styles.sectionTitle}>Detailed Explanation</Text>
             </View>
-         
+            <TextWithSpeaker text={concept.detailedExplanation}>
               <RichContentViewer content={concept.detailedExplanation} />
-           
+            </TextWithSpeaker>
           </View>
 
           {concept.whenToUse && (
@@ -247,9 +247,9 @@ export default function ConceptDetailScreen() {
                 <Clock size={20} color={colors.accent} style={styles.sectionIcon} />
                 <Text style={styles.sectionTitle}>When to Use</Text>
               </View>
-             
+              <TextWithSpeaker text={concept.whenToUse}>
                 <RichContentViewer content={concept.whenToUse} />
-              
+              </TextWithSpeaker>
             </View>
           )}
 
@@ -259,9 +259,9 @@ export default function ConceptDetailScreen() {
                 <AlertCircle size={20} color={colors.warning} style={styles.sectionIcon} />
                 <Text style={styles.sectionTitle}>Why You Need It</Text>
               </View>
-             
+              <TextWithSpeaker text={concept.whyNeed}>
                 <RichContentViewer content={concept.whyNeed} />
-              
+              </TextWithSpeaker>
             </View>
           )}
 
@@ -281,9 +281,9 @@ export default function ConceptDetailScreen() {
                 <GitCompare size={20} color={colors.secondary} style={styles.sectionIcon} />
                 <Text style={styles.sectionTitle}>Key Differences</Text>
               </View>
-            
+              <TextWithSpeaker text={concept.differences}>
                 <RichContentViewer content={concept.differences} />
-            
+              </TextWithSpeaker>
             </View>
           )}
         </View>

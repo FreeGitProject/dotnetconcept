@@ -4,7 +4,7 @@ import { ChevronRight, Code, Lightbulb, Clock, AlertCircle } from 'lucide-react-
 import { GitCompare } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { Concept } from '@/contexts/ConceptsContext';
-//import { SpeakerButton } from '@/components/SpeakerButton';
+import { SpeakerButton } from '@/components/SpeakerButton';
 
 interface ConceptCardProps {
   concept: Concept;
@@ -148,7 +148,13 @@ export function ConceptCard({ concept, onPress }: ConceptCardProps) {
         {concept.definition}
       </Text>
       
-
+      <View style={styles.cardFooter}>
+        <SpeakerButton 
+          text={`${concept.title}. ${concept.definition}`}
+          size={16}
+          style={styles.speakerButton}
+        />
+      </View>
 
       {hasOptionalSections && (
         <View style={styles.sectionsContainer}>
