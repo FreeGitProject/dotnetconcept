@@ -79,9 +79,11 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
       const tokens: any[] = [];
       let currentIndex = 0;
       
+      // Process each character in the line
       while (currentIndex < line.length) {
         const remainingLine = line.substring(currentIndex);
         
+        // Skip whitespace
         if (remainingLine.match(/^\s+/)) {
           const whitespace = remainingLine.match(/^\s+/)![0];
           tokens.push({ type: 'whitespace', content: whitespace });
@@ -89,11 +91,13 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
           continue;
         }
         
+        // Comments
         if (remainingLine.startsWith('//')) {
           tokens.push({ type: 'comment', content: remainingLine });
           break;
         }
         
+        // Multi-line comments
         if (remainingLine.startsWith('/*')) {
           const endIndex = remainingLine.indexOf('*/');
           if (endIndex !== -1) {
@@ -104,6 +108,7 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
           }
         }
         
+        // Strings
         if (remainingLine.startsWith('"')) {
           const stringMatch = remainingLine.match(/^"([^"\\]|\\.)*"/);
           if (stringMatch) {
@@ -113,6 +118,7 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
           }
         }
         
+        // Numbers
         if (remainingLine.match(/^\d+(\.\d+)?/)) {
           const numberMatch = remainingLine.match(/^\d+(\.\d+)?/)![0];
           tokens.push({ type: 'number', content: numberMatch });
@@ -120,6 +126,7 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
           continue;
         }
         
+        // Keywords and identifiers
         if (remainingLine.match(/^[a-zA-Z_][a-zA-Z0-9_]*/)) {
           const identifier = remainingLine.match(/^[a-zA-Z_][a-zA-Z0-9_]*/)![0];
           
@@ -139,6 +146,7 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
           continue;
         }
         
+        // Operators and punctuation
         const char = remainingLine[0];
         if ('{}()[];,.=+-*/<>!&|'.includes(char)) {
           tokens.push({ type: 'operator', content: char });
@@ -173,16 +181,16 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
     container: {
       backgroundColor: codeTheme.background,
       borderRadius: 12,
-      padding: 12,
+      padding: 16,
       marginTop: 12,
       borderWidth: 1,
       borderColor: colors.border,
-      maxHeight: 400,
-      height: 400,
+      maxHeight: isFullscreen ? undefined : 500,
     },
     fullscreenContainer: {
-      flex: 1,
       backgroundColor: codeTheme.background,
+      flex: 1,
+      padding: 16,
     },
     header: {
       flexDirection: 'row',
@@ -247,21 +255,21 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
     greenDot: {
       backgroundColor: '#27ca3f',
     },
-    verticalScroll: {
-      flex: 1,
-      width: '100%',
+    scrollView: {
+      maxHeight: isFullscreen ? undefined : 400,
     },
-    horizontalScroll: {
-      minWidth: '100%',
+    fullscreenScrollView: {
+      flex: 1,
     },
     codeContent: {
-      paddingBottom: 20,
+      width: '100%',
     },
     line: {
       flexDirection: 'row',
       alignItems: 'flex-start',
       minHeight: 20,
       marginBottom: 2,
+      width: '100%',
     },
     lineNumber: {
       width: 40,
@@ -271,16 +279,19 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
       textAlign: 'right',
       marginRight: 12,
       paddingTop: 1,
+      flexShrink: 0,
     },
     lineContent: {
       flex: 1,
       flexDirection: 'row',
       flexWrap: 'wrap',
+      alignItems: 'flex-start',
     },
     token: {
       fontSize: 14,
       fontFamily: 'monospace',
       lineHeight: 20,
+      flexWrap: 'wrap',
     },
     fullscreenModal: {
       flex: 1,
@@ -309,35 +320,30 @@ export function CodeBlock({ code, language = 'csharp', style }: CodeBlockProps) 
 
   const CodeContent = () => (
     <ScrollView 
-      style={styles.verticalScroll}
+      style={isFullscreen ? styles.fullscreenScrollView : styles.scrollView}
       showsVerticalScrollIndicator={true}
+      nestedScrollEnabled={true}
     >
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={true}
-        contentContainerStyle={styles.codeContent}
-      >
-        <View style={styles.horizontalScroll}>
-          {highlightedLines.map((line, index) => (
-            <View key={index} style={styles.line}>
-              <Text style={styles.lineNumber}>{line.lineNumber}</Text>
-              <View style={styles.lineContent}>
-                {line.tokens.map((token, tokenIndex) => (
-                  <Text
-                    key={tokenIndex}
-                    style={[
-                      styles.token,
-                      { color: getTokenColor(token.type) }
-                    ]}
-                  >
-                    {token.content}
-                  </Text>
-                ))}
-              </View>
+      <View style={styles.codeContent}>
+        {highlightedLines.map((line, index) => (
+          <View key={index} style={styles.line}>
+            <Text style={styles.lineNumber}>{line.lineNumber}</Text>
+            <View style={styles.lineContent}>
+              {line.tokens.map((token, tokenIndex) => (
+                <Text
+                  key={tokenIndex}
+                  style={[
+                    styles.token,
+                    { color: getTokenColor(token.type) }
+                  ]}
+                >
+                  {token.content}
+                </Text>
+              ))}
             </View>
-          ))}
-        </View>
-      </ScrollView>
+          </View>
+        ))}
+      </View>
     </ScrollView>
   );
 

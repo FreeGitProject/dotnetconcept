@@ -5,9 +5,9 @@ import {
   StyleSheet, 
   ScrollView, 
   Pressable, 
-  SafeAreaView,
   Alert
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Save, ArrowLeft } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts } from '@/contexts/ConceptsContext';
@@ -26,6 +26,7 @@ export default function AddConceptScreen() {
     whyNeed: '',
     codeExample: '',
     keyword: '',
+    differences: '',
   });
 
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -65,6 +66,7 @@ export default function AddConceptScreen() {
               whyNeed: '',
               codeExample: '',
               keyword: '',
+              differences: '',
             });
             router.push('/(tabs)');
           }
@@ -228,6 +230,16 @@ export default function AddConceptScreen() {
               error={errors.keyword}
               multiline={false}
               minHeight={50}
+            />
+          </View>
+
+          <View style={styles.fieldContainer}>
+            <RichTextEditor
+              label="Differences"
+              value={formData.differences}
+              onChangeText={(value) => updateField('differences', value)}
+              placeholder="Compare this concept with similar ones (e.g., vs other patterns, approaches, or technologies)"
+              minHeight={120}
             />
           </View>
         </View>

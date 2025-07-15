@@ -11,6 +11,7 @@ interface Concept {
   whyNeed: string;
   codeExample: string;
   keyword: string;
+  differences: string;
 }
 
 interface ConceptsContextType {
@@ -46,7 +47,8 @@ export function ConceptsProvider({ children }: ConceptsProviderProps) {
         concept.definition,
         concept.detailedExplanation,
         concept.whenToUse,
-        concept.whyNeed
+        concept.whyNeed,
+        concept.differences
       ].join(' ').toLowerCase()
     }));
   }, [concepts]);
