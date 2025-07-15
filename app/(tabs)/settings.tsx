@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, SafeAreaView, Pressable, Alert, Platform,ScrollView } from 'react-native';
-import { Moon, Sun, Info, Code, Heart, Download, Upload, FileText, Share } from 'lucide-react-native';
+import { View, Text, StyleSheet, Pressable, Alert, Platform, ScrollView } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { Moon, Sun, Info, Code, Heart, Download, Upload, FileText, Share, Volume2, VolumeX, Settings as SettingsIcon } from 'lucide-react-native';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts } from '@/contexts/ConceptsContext';
+import { useTextToSpeech } from '@/contexts/TextToSpeechContext';
 import { ThemeToggle } from '@/components/ThemeToggle';
+import { SpeakerButton } from '@/components/SpeakerButton';
 import * as DocumentPicker from 'expo-document-picker';
 import * as FileSystem from 'expo-file-system';
 import * as Sharing from 'expo-sharing';
@@ -11,6 +14,7 @@ import * as Sharing from 'expo-sharing';
 export default function SettingsScreen() {
   const { colors, theme } = useTheme();
   const { concepts, importConcepts, exportConcepts } = useConcepts();
+  const { isEnabled: ttsEnabled, toggleTTS, rate, pitch, setRate, setPitch } = useTextToSpeech();
   const [isExporting, setIsExporting] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
 
@@ -194,7 +198,7 @@ export default function SettingsScreen() {
     } else {
       if (await Sharing.isAvailableAsync()) {
         await Sharing.shareAsync('', {
-         // message: shareMessage,
+       
           dialogTitle: 'Share C# Concepts App'
         });
       }
@@ -338,6 +342,42 @@ export default function SettingsScreen() {
     scrollContent: {
       paddingBottom: 120,
     },
+    toggleButton: {
+      paddingHorizontal: 16,
+      paddingVertical: 8,
+      borderRadius: 16,
+      minWidth: 50,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    toggleButtonActive: {
+      backgroundColor: colors.primary,
+    },
+    toggleButtonInactive: {
+      backgroundColor: colors.border,
+    },
+    toggleButtonText: {
+      fontSize: 12,
+      fontWeight: '600',
+    },
+    rateControls: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    rateButton: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
+      backgroundColor: colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginLeft: 8,
+    },
+    rateButtonText: {
+      color: 'white',
+      fontSize: 18,
+      fontWeight: '600',
+    },
   });
 
   return (
@@ -368,7 +408,85 @@ export default function SettingsScreen() {
           </View>
           <ThemeToggle />
         </View>
+        <View style={[styles.settingItem, styles.lastItem]}>
+          <View style={[styles.settingIcon, { backgroundColor: colors.secondary + '15' }]}>
+            {ttsEnabled ? (
+              <Volume2 size={16} color={colors.secondary} />
+            ) : (
+              <VolumeX size={16} color={colors.secondary} />
+            )}
+          </View>
+          <View style={styles.settingContent}>
+            <Text style={styles.settingTitle}>Text-to-Speech</Text>
+            <Text style={styles.settingDescription}>
+              {ttsEnabled ? 'Speaker icons enabled' : 'Speaker icons disabled'}
+            </Text>
+          </View>
+          <Pressable
+            style={[
+              styles.toggleButton,
+              ttsEnabled ? styles.toggleButtonActive : styles.toggleButtonInactive
+            ]}
+            onPress={toggleTTS}
+          >
+            <Text style={[
+              styles.toggleButtonText,
+              { color: ttsEnabled ? 'white' : colors.textSecondary }
+            ]}>
+              {ttsEnabled ? 'ON' : 'OFF'}
+            </Text>
+          </Pressable>
+        </View>
       </View>
+
+      {ttsEnabled && (
+        <View style={styles.section}>
+          <View style={styles.sectionHeader}>
+            <Text style={styles.sectionTitle}>Speech Settings</Text>
+          </View>
+          <View style={styles.settingItem}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.accent + '15' }]}>
+              <SettingsIcon size={16} color={colors.accent} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingTitle}>Speech Rate</Text>
+              <Text style={styles.settingDescription}>
+                Current: {(rate * 100).toFixed(0)}% speed
+              </Text>
+            </View>
+            <View style={styles.rateControls}>
+              <Pressable
+                style={styles.rateButton}
+                onPress={() => setRate(Math.max(0.3, rate - 0.1))}
+              >
+                <Text style={styles.rateButtonText}>-</Text>
+              </Pressable>
+              <Pressable
+                style={styles.rateButton}
+                onPress={() => setRate(Math.min(1.5, rate + 0.1))}
+              >
+                <Text style={styles.rateButtonText}>+</Text>
+              </Pressable>
+            </View>
+          </View>
+          <View style={[styles.settingItem, styles.lastItem]}>
+            <View style={[styles.settingIcon, { backgroundColor: colors.warning + '15' }]}>
+              <Volume2 size={16} color={colors.warning} />
+            </View>
+            <View style={styles.settingContent}>
+              <Text style={styles.settingTitle}>Test Speech</Text>
+              <Text style={styles.settingDescription}>
+                Try the text-to-speech feature
+              </Text>
+            </View>
+            <SpeakerButton 
+              text="This is a test of the text-to-speech feature. You can adjust the speed and use speaker icons throughout the app to listen to any content."
+              showWhenDisabled={true}
+              size={20}
+            />
+          </View>
+        </View>
+      )}
 
       <View style={styles.section}>
         <View style={styles.sectionHeader}>

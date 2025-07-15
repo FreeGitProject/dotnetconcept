@@ -1,5 +1,6 @@
 import React, { useState, useCallback } from 'react';
-import { View, Text, StyleSheet, FlatList, SafeAreaView, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, FlatList, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { router } from 'expo-router';
 import { useTheme } from '@/contexts/ThemeContext';
 import { useConcepts, Concept } from '@/contexts/ConceptsContext';
@@ -69,9 +70,10 @@ export default function HomeScreen() {
     container: {
       flex: 1,
       backgroundColor: colors.background,
+     // paddingTop: 0, // SafeAreaView handles this
     },
     header: {
-      paddingTop: 16,
+      paddingTop: 8,
       paddingHorizontal: 16,
       paddingBottom: 8,
     },
